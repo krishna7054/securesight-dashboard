@@ -12,6 +12,9 @@ import {
   SkipForward,
   RotateCcw,
   RotateCw,
+  DoorOpen ,
+  Plus ,
+  UserRoundSearch ,
   Camera,
   Grid3X3,
   ImageIcon,
@@ -35,13 +38,23 @@ export default function Home() {
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [loading, setLoading] = useState(true);
 
+    // const [incidents, setIncidents] = useState<Incident[]>([]);  // Unresolved incidents
+  const [resolvedCount, setResolvedCount] = useState<number>(0);  // NEW: For resolved count
+  // const [loading, setLoading] = useState(true);
+
   useEffect(() => {
+    // Fetch unresolved incidents (as before)
     fetch('/api/incidents?resolved=false')
       .then(res => res.json())
       .then(data => {
         setIncidents(data);
         setLoading(false);
       });
+
+    // NEW: Fetch resolved count (adjust your API to support ?resolved=true)
+    fetch('/api/incidents?resolved=true')  // Or use a separate endpoint for count
+      .then(res => res.json())
+      .then(data => setResolvedCount(data.length));  // Or use Prisma count in API for efficiency
   }, []);
 
   const resolveIncident = async (id: number) => {
@@ -56,7 +69,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-neutral-900 text-white">
       {/* Navbar */}
       <nav className="flex items-center justify-between px-6 py-3 bg-[#131313] border-b border-[#393732] relative">
     
@@ -119,7 +132,7 @@ export default function Home() {
 
       <div className="flex">
         {/* Incident Player (Left) */}
-        <div className="w-2/3 p-4">
+        <div className="w-3/4 p-4">
           <div className="bg-black h-96 flex items-center justify-center">
             <img src="/placeholder-video.jpg" alt="Video Feed" className="max-h-full" /> {/* Static image */}
           </div>
@@ -128,37 +141,32 @@ export default function Home() {
             <img src="/thumbnails/camera2.jpg" alt="Camera 2" className="w-24 h-16" />
           </div>
           {/* Optional Timeline here */}
+          
         </div>
 
         {/* Incident List (Right) */}
-        {/* <div className="w-1/3 p-4">
-          <h2 className="text-xl mb-4">Active Incidents</h2>
-          {loading ? <p>Loading...</p> : (
-            <ul>
-              {incidents.map(inc => (
-                <li key={inc.id} className={`flex mb-4 p-2 border ${inc.resolved ? 'opacity-50' : ''}`}>
-                  <img src={inc.thumbnailUrl} alt="Thumbnail" className="w-16 h-16 mr-4" />
-                  <div>
-                    <p className="font-bold">{inc.type} - {inc.camera.location}</p>
-                    <p>{new Date(inc.tsStart).toLocaleTimeString()} - {new Date(inc.tsEnd).toLocaleTimeString()}</p>
-                    <button onClick={() => resolveIncident(inc.id)} className="bg-green-500 text-white px-2 py-1 mt-2">Resolve</button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div> */}
-        <div className="w-72 bg-[#131313] border-l border-[#393732] p-3">
+        <Card className="w-2/4 mr-3 mt-3 bg-[#131313] border-l border-[#393732] p-4 h-96 overflow-auto"
+  style={{
+    scrollbarWidth: 'none',          // Firefox
+    msOverflowStyle: 'none',         // IE 10+
+  }}
+>
+  <div
+    style={{
+      overflow: 'auto',
+    }}
+    className="hover:[&::-webkit-scrollbar]:block [&::-webkit-scrollbar]:hidden"
+  >
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center space-x-2">
               <AlertCircle className="w-4 h-4 text-[#ef4444]" />
-              <span className="text-sm font-semibold">15 Unresolved Incidents</span>
+              <span className="text-sm font-semibold">{incidents.length} Unresolved Incidents</span>
             </div>
-            <div className="flex items-center space-x-1">
-              <div className="w-2 h-2 bg-[#ef4444] rounded-full"></div>
-              <div className="w-2 h-2 bg-[#f97316] rounded-full"></div>
-              <div className="w-2 h-2 bg-[#3b82f6] rounded-full"></div>
-              <span className="text-[10px] text-[#22c55e]">✓ 4 resolved incidents</span>
+            <div className="flex flex-row items-center">
+              <DoorOpen className="w-4 h-4 bg-[#ef4444] rounded-full "></DoorOpen>
+              <Plus  className="w-4 h-4 bg-[#f97316] rounded-full"></Plus >
+              <UserRoundSearch  className="w-4 h-4 bg-[#3b82f6] rounded-full"></UserRoundSearch >
+              <span className="text-[10px] text-[#22c55e] ">✓ {resolvedCount-incidents.length} resolved incidents</span>
             </div>
           </div>
 
@@ -177,7 +185,7 @@ export default function Home() {
                         <Badge
                           variant="secondary"
                           className={`text-[10px] px-1 py-0.5 h-auto ${
-                            incident.color === "red" ? "bg-[#ef4444] text-white" : "bg-[#f97316] text-white"
+                            incident.type === "Gun Threat" ? "bg-[#ef4444] text-white" : "bg-[#f97316] text-white"
                           }`}
                         >
                           {incident.type}
@@ -185,21 +193,22 @@ export default function Home() {
                       </div>
                       <div className="text-[10px] text-[#78716c] mb-0.5">📹 {incident.camera.location}</div>
                       <div className="text-[10px] text-[#78716c] mb-1">🕐 {new Date(incident.tsStart).toLocaleTimeString()} - {new Date(incident.tsEnd).toLocaleTimeString()}</div>
+                      </div>
                       <Button
                         onClick={() => resolveIncident(incident.id)}
                         variant="ghost"
-                        size="sm"
-                        className="text-[#ffcc00] hover:text-[#ffcc00] hover:bg-[#393732] text-[10px] h-5 px-1"
+                        size="lg"
+                        className="text-[#ffcc00] hover:text-[#ffcc00] hover:bg-[#393732] text-[12px]  px-1"
                       >
                         Resolve →
                       </Button>
-                    </div>
                   </div>
                 </CardContent>
               </Card>
             ))}
           </div>
-        </div>
+          </div>
+        </Card>
       </div>
     </div>
   );
