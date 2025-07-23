@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+### SecureSight Dashboard
+SecureSight is a CCTV monitoring dashboard built as a technical assessment. It features a navbar, incident player (left side with static image and mini thumbnails), incident list (right side with resolve functionality). The backend uses Prisma with SQLite for data management, seeding cameras and incidents.
+
+## Features
+- Navbar: Simple top navigation.
+- Incident Player: Displays a static placeholder image/video with mini camera thumbnails.
+- Incident List: Shows unresolved incidents with thumbnails, details, and an optimistic "Resolve" button.
+- API: Endpoints for fetching incidents and resolving them.
+- Data seeded with 4 cameras and 13+ incidents across threat types.
 
 ## Getting Started
+Clone the repo and follow the deployment instructions below.
 
-First, run the development server:
+### Prerequisites
+Node.js v20+ (tested on v22.17.0)
+npm or yarn
 
+### Installation
+1. Clone the repository:
+```bash
+git clone https://github.com/krishna7054/securesight-dashboard.git
+cd securesight-dashboard
+```
+2. Install dependencies:
+```bash
+npm install
+```
+3. Set up the database:
+```bash
+npx prisma generate
+npx prisma db push
+npx prisma db seed
+```
+- Note: Uses SQLite (prisma/dev.db). For production, switch to Postgres (e.g., via Neon).
+
+4. Run the development server:
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
+- Open http://localhost:3000 to view the app.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Deployment Instructions
+This project is optimized for Vercel deployment, but works with Netlify or Render too. No .env vars are required for SQLite, but add them if switching databases.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Push to GitHub: Create a public repo and push your code.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. Deploy to Vercel:
 
-## Learn More
+- Sign up at vercel.com.
+- Import your GitHub repo.
+- Configure: Select Next.js framework, no build command overrides needed.
+- Deploy: Vercel handles the build and provides a live URL (e.g., securesight-dashboard.vercel.app).
+- For database: Use a cloud provider like Neon for Postgres (update prisma/schema.prisma datasource URL and add to Vercel env vars).
 
-To learn more about Next.js, take a look at the following resources:
+Test the live site: Ensure API routes work and thumbnails load (static assets in /public).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Live Demo: https://securesight-dashboard.vercel.app.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Tech Decisions
+- Framework: Next.js 15 (App Router) for full-stack development, server-side rendering, and easy API routes. Chosen for its performance and React integration.
 
-## Deploy on Vercel
+- Database & ORM: Prisma with SQLite for simplicity in development (local file-based, no external setup). Prisma handles schema, migrations, and seeding efficiently. Easy to swap to Postgres for production.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- UI & Styling: Tailwind CSS for rapid, utility-first styling to match Figma designs. Added Shadcn/UI for reusable components (e.g., Card, Button) built on Tailwind and Radix UI, allowing customization without heavy dependencies.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- State Management: React hooks (useState, useEffect) for fetching and updating incidents with optimistic UI.
+
+- Optional Features: React Three Fiber for the 3D route, enabling simple model loading and animations as per the extra credit Figma.
+
+- Other: tsx for running TypeScript scripts (e.g., seeding) to handle ESM compatibility issues in Node 22+.
+
+These choices prioritize speed, maintainability, and alignment with modern React/Next.js practices, focusing on TypeScript for type safety.
+
+### If I Had More Time...
+- Integrate real-time video streaming (e.g., via WebRTC or HLS) instead of static placeholders.
+
+- Add user authentication and roles (e.g., with NextAuth.js) for secure access.
+
+- Enhance the interactive timeline with full drag-and-snap functionality and integration with video playback.
+
+- Implement advanced 3D animations (e.g., using GSAP or Trois.js) and interactive controls for the product model.
+
+- Add filtering/sorting for incidents (e.g., by type, camera, or date) and pagination for large lists.
+
+- Optimize performance with Next.js Image component for thumbnails and server-side data fetching.
+
+- Set up CI/CD with GitHub Actions for automated testing and deployment.
