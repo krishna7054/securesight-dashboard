@@ -130,14 +130,14 @@ export default function Home() {
           <div className="flex items-center justify-between mb-3 flex-wrap gap-y-2">
             <div className="flex items-center space-x-2">
               <AlertCircle className="w-4 h-4 text-[#ef4444]" />
-              <span className="text-sm font-semibold">{incidents.length} Unresolved Incidents</span>
+              <span className="text-sm font-semibold text-white">{incidents.length} Unresolved Incidents</span>
             </div>
             <div className="flex flex-row items-center gap-1">
               <DoorOpen className="w-4 h-4 bg-[#ef4444] rounded-full" />
               <Plus className="w-4 h-4 bg-[#f97316] rounded-full" />
               <UserRoundSearch className="w-4 h-4 bg-[#3b82f6] rounded-full" />
               <div className="border rounded-xl px-2 bg-neutral-900">
-                <span className="text-[10px] text-[#22c55e]">✓ {resolvedCount - incidents.length} resolved</span>
+                <span className="text-[10px] text-[#22c55e]">✓ {resolvedCount - incidents.length} resolved incidents</span>
               </div>
             </div>
           </div>
