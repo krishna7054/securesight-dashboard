@@ -29,9 +29,9 @@ async function main() {
 
     // Gun Threat
     { cameraId: cameraList[0].id, type: 'Gun Threat', tsStart: new Date(oneDayAgo.getTime() + 2*3600000), tsEnd: new Date(oneDayAgo.getTime() + 2*3600000 + 500000), thumbnailUrl: '/thumbnails/gun1.jpg', resolved: false },
-    { cameraId: cameraList[1].id, type: 'Gun Threat', tsStart: new Date(oneDayAgo.getTime() + 5*3600000), tsEnd: new Date(oneDayAgo.getTime() + 5*3600000 + 300000), thumbnailUrl: '/thumbnails/gun2.jpg', resolved: true },
-    { cameraId: cameraList[2].id, type: 'Gun Threat', tsStart: new Date(oneDayAgo.getTime() + 8*3600000), tsEnd: new Date(oneDayAgo.getTime() + 8*3600000 + 700000), thumbnailUrl: '/thumbnails/gun3.jpg', resolved: false },
-    { cameraId: cameraList[3].id, type: 'Gun Threat', tsStart: new Date(oneDayAgo.getTime() + 11*3600000), tsEnd: new Date(oneDayAgo.getTime() + 11*3600000 + 200000), thumbnailUrl: '/thumbnails/gun4.jpg', resolved: false },
+    { cameraId: cameraList[1].id, type: 'Gun Threat', tsStart: new Date(oneDayAgo.getTime() + 5*3600000), tsEnd: new Date(oneDayAgo.getTime() + 5*3600000 + 300000), thumbnailUrl: '/thumbnails/gun1.jpg', resolved: true },
+    { cameraId: cameraList[2].id, type: 'Gun Threat', tsStart: new Date(oneDayAgo.getTime() + 8*3600000), tsEnd: new Date(oneDayAgo.getTime() + 8*3600000 + 700000), thumbnailUrl: '/thumbnails/gun1.jpg', resolved: false },
+    { cameraId: cameraList[3].id, type: 'Gun Threat', tsStart: new Date(oneDayAgo.getTime() + 11*3600000), tsEnd: new Date(oneDayAgo.getTime() + 11*3600000 + 200000), thumbnailUrl: '/thumbnails/gun1.jpg', resolved: false },
 
     // Face Recognised
     { cameraId: cameraList[0].id, type: 'Face Recognised', tsStart: new Date(oneDayAgo.getTime() + 3*3600000), tsEnd: new Date(oneDayAgo.getTime() + 3*3600000 + 400000), thumbnailUrl: '/thumbnails/face1.jpg', resolved: false },

@@ -41,6 +41,7 @@ export default function Home() {
     // const [incidents, setIncidents] = useState<Incident[]>([]);  // Unresolved incidents
   const [resolvedCount, setResolvedCount] = useState<number>(0);  // NEW: For resolved count
   // const [loading, setLoading] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
     // Fetch unresolved incidents (as before)
@@ -69,7 +70,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-900 text-white">
+    <div className="min-h-screen bg-black text-white">
       {/* Navbar */}
       <nav className="flex items-center justify-between px-6 py-3 bg-[#131313] border-b border-[#393732] relative">
     
@@ -132,17 +133,17 @@ export default function Home() {
 
       <div className="flex">
         {/* Incident Player (Left) */}
-        <div className="w-3/4 p-4">
-          <div className="bg-black h-96 flex items-center justify-center">
-            <img src="/placeholder-video.jpg" alt="Video Feed" className="max-h-full" /> {/* Static image */}
+        <Card className="w-3/4 mx-3 mt-3  border-amber-200 border border-[#393732]">
+          <div className="bg-black h-84 relative">
+            <img src="/thumbnails/gun1.jpg" alt="Video Feed" className="max-h-full w-full object-cover" /> {/* Static image */}
+          <div className="absolute bottom-2 right-2 flex space-x-2 z-50">
+            <img src="/thumbnails/gun1.jpg" alt="Camera 1" className="w-24 h-16 border border-white " />
+            <img src="/thumbnails/gun1.jpg" alt="Camera 2" className="w-24 h-16 border border-white " />
           </div>
-          <div className="flex mt-2">
-            <img src="/thumbnails/camera1.jpg" alt="Camera 1" className="w-24 h-16 mr-2" />
-            <img src="/thumbnails/camera2.jpg" alt="Camera 2" className="w-24 h-16" />
           </div>
           {/* Optional Timeline here */}
           
-        </div>
+        </Card>
 
         {/* Incident List (Right) */}
         <Card className="w-2/4 mr-3 mt-3 bg-[#131313] border-l border-[#393732] p-4 h-96 overflow-auto"
@@ -166,7 +167,9 @@ export default function Home() {
               <DoorOpen className="w-4 h-4 bg-[#ef4444] rounded-full "></DoorOpen>
               <Plus  className="w-4 h-4 bg-[#f97316] rounded-full"></Plus >
               <UserRoundSearch  className="w-4 h-4 bg-[#3b82f6] rounded-full"></UserRoundSearch >
+              <div className='border rounded-xl px-2 mx-1 bg-neutral-900'>
               <span className="text-[10px] text-[#22c55e] ">✓ {resolvedCount-incidents.length} resolved incidents</span>
+              </div>
             </div>
           </div>
 
@@ -178,10 +181,10 @@ export default function Home() {
                     <img
                       src={incident.thumbnailUrl || "/placeholder.svg"}
                       alt="Incident thumbnail"
-                      className="w-12 h-8 rounded object-cover flex-shrink-0"
+                      className="w-20 h-20 rounded object-cover flex-shrink-0"
                     />
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center space-x-1 mb-1">
+                      <div className="flex items-center space-x-1 mb-2">
                         <Badge
                           variant="secondary"
                           className={`text-[10px] px-1 py-0.5 h-auto ${
@@ -198,7 +201,7 @@ export default function Home() {
                         onClick={() => resolveIncident(incident.id)}
                         variant="ghost"
                         size="lg"
-                        className="text-[#ffcc00] hover:text-[#ffcc00] hover:bg-[#393732] text-[12px]  px-1"
+                        className="text-[#ffcc00] hover:text-[#ffcc00] hover:bg-[#393732] text-[15px]  my-4"
                       >
                         Resolve →
                       </Button>
@@ -210,6 +213,28 @@ export default function Home() {
           </div>
         </Card>
       </div>
+      {/* Video Controls */}
+          <div className="bg-[#131313] my-3 mx-3 p-3  border-[#393732] rounded-xl">
+            <div className="flex items-center justify-start space-x-6 ">
+              <Button variant="ghost" size="sm" className="h-7 w-7 p-0 cursor-pointer">
+                <SkipBack className="w-3 h-3" />
+              </Button>
+              <Button variant="ghost" size="sm" className="h-7 w-7 p-0 cursor-pointer">
+                <RotateCcw className="w-3 h-3" />
+              </Button>
+              <Button variant="ghost" size="sm" className="h-7 w-7 p-0 cursor-pointer" onClick={() => setIsPlaying(!isPlaying)}>
+                {isPlaying ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
+              </Button>
+              <Button variant="ghost" size="sm" className="h-7 w-7 p-0 cursor-pointer">
+                <RotateCw className="w-3 h-3" />
+              </Button>
+              <Button variant="ghost" size="sm" className="h-7 w-7 p-0 cursor-pointer">
+                <SkipForward className="w-3 h-3" />
+              </Button>
+              <span className="text-xs">03:12:37 (15-Jun-2025)</span>
+              <span className="text-xs">1x</span>
+            </div>
+            </div>
     </div>
   );
 }
