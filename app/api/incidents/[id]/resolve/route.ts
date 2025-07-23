@@ -2,8 +2,8 @@ import { PrismaClient } from '@prisma/client';
 import { NextResponse } from 'next/server';
 
 const prisma = new PrismaClient();
-
-export async function PATCH(request: Request, { params }: { params: { id: string } }) {
+type Params = { params: { id: string } };
+export async function PATCH(request: Request, { params }: Params) {
   const id = parseInt(params.id);
   const incident = await prisma.incident.findUnique({ where: { id } });
 
