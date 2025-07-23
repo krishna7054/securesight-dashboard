@@ -1,103 +1,206 @@
-import Image from "next/image";
+'use client';
+
+import { useState, useEffect } from 'react';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import {
+  Play,
+  Pause,
+  SkipBack,
+  SkipForward,
+  RotateCcw,
+  RotateCw,
+  Camera,
+  Grid3X3,
+  ImageIcon,
+  AlertTriangle,
+  Users,
+  ChevronDown,
+  AlertCircle,
+} from "lucide-react"
+
+interface Incident {
+  id: number;
+  type: string;
+  tsStart: string;
+  tsEnd: string;
+  thumbnailUrl: string;
+  resolved: boolean;
+  camera: { name: string; location: string };
+}
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [incidents, setIncidents] = useState<Incident[]>([]);
+  const [loading, setLoading] = useState(true);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  useEffect(() => {
+    fetch('/api/incidents?resolved=false')
+      .then(res => res.json())
+      .then(data => {
+        setIncidents(data);
+        setLoading(false);
+      });
+  }, []);
+
+  const resolveIncident = async (id: number) => {
+    // Optimistic UI: Fade out immediately
+    setIncidents(incidents.map(inc => inc.id === id ? { ...inc, resolved: true } : inc));
+
+    // API call
+    await fetch(`/api/incidents/${id}/resolve`, { method: 'PATCH' });
+
+    // Remove from list after API success
+    setIncidents(incidents.filter(inc => inc.id !== id));
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100">
+      {/* Navbar */}
+      <nav className="flex items-center justify-between px-6 py-3 bg-[#131313] border-b border-[#393732] relative">
+    
+
+          <div className="flex items-center space-x-2">
+            <div className="w-6 h-6 bg-white rounded flex items-center justify-center">
+              <span className="text-black font-bold text-xs">M</span>
+            </div>
+            <span className="text-lg font-bold">MANDLACX</span>
+          </div>
+        {/* Existing content with relative positioning to appear above gradient */}
+        <div className="flex items-center space-x-8 relative z-10">
+           {/* Add gradient overlay */}
+        <div
+          className="absolute inset-0 pointer-events-none blur-2xl"
+          style={{
+            background: `radial-gradient(circle at center, #D0A70459 35%, transparent 100%)`,
+          }}
+        ></div>
+          <div className="flex items-center space-x-6">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-[#ffcc00] hover:text-[#ffcc00] hover:bg-[#393732] text-sm"
+            >
+              <Grid3X3 className="w-3 h-3 mr-1" />
+              Dashboard
+            </Button>
+            <Button variant="ghost" size="sm" className="text-white hover:text-white hover:bg-[#393732] text-sm">
+              <Camera className="w-3 h-3 mr-1" />
+              Cameras
+            </Button>
+            <Button variant="ghost" size="sm" className="text-white hover:text-white hover:bg-[#393732] text-sm">
+              <ImageIcon className="w-3 h-3 mr-1" />
+              Scenes
+            </Button>
+            <Button variant="ghost" size="sm" className="text-white hover:text-white hover:bg-[#393732] text-sm">
+              <AlertTriangle className="w-3 h-3 mr-1" />
+              Incidents
+            </Button>
+            <Button variant="ghost" size="sm" className="text-white hover:text-white hover:bg-[#393732] text-sm">
+              <Users className="w-3 h-3 mr-1" />
+              Users
+            </Button>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        <div className="flex items-center space-x-2 relative z-10">
+          <Avatar className="w-7 h-7">
+            <AvatarImage src="/placeholder.svg?height=28&width=28" />
+            <AvatarFallback className="text-xs">MA</AvatarFallback>
+          </Avatar>
+          <div className="text-xs">
+            <div className="font-medium">Mohammed Ajhas</div>
+            <div className="text-[#78716c]">ajhas@mandlac.com</div>
+          </div>
+          <ChevronDown className="w-3 h-3 text-[#78716c]" />
+        </div>
+      </nav>
+
+      <div className="flex">
+        {/* Incident Player (Left) */}
+        <div className="w-2/3 p-4">
+          <div className="bg-black h-96 flex items-center justify-center">
+            <img src="/placeholder-video.jpg" alt="Video Feed" className="max-h-full" /> {/* Static image */}
+          </div>
+          <div className="flex mt-2">
+            <img src="/thumbnails/camera1.jpg" alt="Camera 1" className="w-24 h-16 mr-2" />
+            <img src="/thumbnails/camera2.jpg" alt="Camera 2" className="w-24 h-16" />
+          </div>
+          {/* Optional Timeline here */}
+        </div>
+
+        {/* Incident List (Right) */}
+        {/* <div className="w-1/3 p-4">
+          <h2 className="text-xl mb-4">Active Incidents</h2>
+          {loading ? <p>Loading...</p> : (
+            <ul>
+              {incidents.map(inc => (
+                <li key={inc.id} className={`flex mb-4 p-2 border ${inc.resolved ? 'opacity-50' : ''}`}>
+                  <img src={inc.thumbnailUrl} alt="Thumbnail" className="w-16 h-16 mr-4" />
+                  <div>
+                    <p className="font-bold">{inc.type} - {inc.camera.location}</p>
+                    <p>{new Date(inc.tsStart).toLocaleTimeString()} - {new Date(inc.tsEnd).toLocaleTimeString()}</p>
+                    <button onClick={() => resolveIncident(inc.id)} className="bg-green-500 text-white px-2 py-1 mt-2">Resolve</button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div> */}
+        <div className="w-72 bg-[#131313] border-l border-[#393732] p-3">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center space-x-2">
+              <AlertCircle className="w-4 h-4 text-[#ef4444]" />
+              <span className="text-sm font-semibold">15 Unresolved Incidents</span>
+            </div>
+            <div className="flex items-center space-x-1">
+              <div className="w-2 h-2 bg-[#ef4444] rounded-full"></div>
+              <div className="w-2 h-2 bg-[#f97316] rounded-full"></div>
+              <div className="w-2 h-2 bg-[#3b82f6] rounded-full"></div>
+              <span className="text-[10px] text-[#22c55e]">✓ 4 resolved incidents</span>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            {incidents.map((incident) => (
+              <Card key={incident.id} className="bg-[#232323] border-[#393732]">
+                <CardContent className="p-2">
+                  <div className="flex items-start space-x-2">
+                    <img
+                      src={incident.thumbnailUrl || "/placeholder.svg"}
+                      alt="Incident thumbnail"
+                      className="w-12 h-8 rounded object-cover flex-shrink-0"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center space-x-1 mb-1">
+                        <Badge
+                          variant="secondary"
+                          className={`text-[10px] px-1 py-0.5 h-auto ${
+                            incident.color === "red" ? "bg-[#ef4444] text-white" : "bg-[#f97316] text-white"
+                          }`}
+                        >
+                          {incident.type}
+                        </Badge>
+                      </div>
+                      <div className="text-[10px] text-[#78716c] mb-0.5">📹 {incident.camera.location}</div>
+                      <div className="text-[10px] text-[#78716c] mb-1">🕐 {new Date(incident.tsStart).toLocaleTimeString()} - {new Date(incident.tsEnd).toLocaleTimeString()}</div>
+                      <Button
+                        onClick={() => resolveIncident(incident.id)}
+                        variant="ghost"
+                        size="sm"
+                        className="text-[#ffcc00] hover:text-[#ffcc00] hover:bg-[#393732] text-[10px] h-5 px-1"
+                      >
+                        Resolve →
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
