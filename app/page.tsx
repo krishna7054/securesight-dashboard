@@ -198,7 +198,7 @@ export default function Home() {
                       onClick={() => resolveIncident(incident.id)}
                       variant="ghost"
                       size="lg"
-                      className="text-[#ffcc00] hover:text-[#ffcc00] hover:bg-[#393732] text-[13px] mt-2 sm:mt-0 sm:ml-auto"
+                      className="text-[#ffcc00] hover:text-[#ffcc00] hover:bg-[#393732] text-[13px] mt-2 sm:mt-0 sm:ml-auto cursor-pointer"
                     >
                       Resolve →
                     </Button>
