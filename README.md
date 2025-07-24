@@ -27,11 +27,16 @@ npm install
 ```
 3. Set up the database:
 ```bash
+# Generate new Prisma client for PostgreSQL
 npx prisma generate
+# Create and run migration
+npx prisma migrate dev --name init
+# Push schema to production database
 npx prisma db push
+# Seed db
 npx prisma db seed
 ```
-- Note: Uses SQLite (prisma/dev.db). For production, switch to Postgres (e.g., via Neon).
+- Note: Uses  Postgres (via Neon).
 
 4. Run the development server:
 ```bash
@@ -54,7 +59,7 @@ This project is optimized for Vercel deployment, but works with Netlify or Rende
 
 Test the live site: Ensure API routes work and thumbnails load (static assets in /public).
 
-Live Demo: https://securesight-dashboard.vercel.app.
+Live Demo: http://securesight-dashboard-sepia.vercel.app/.
 
 ### Tech Decisions
 - Framework: Next.js 15 (App Router) for full-stack development, server-side rendering, and easy API routes. Chosen for its performance and React integration.
