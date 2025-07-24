@@ -40,18 +40,44 @@ export default function Home() {
   const [resolvedCount, setResolvedCount] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  useEffect(() => {
-    fetch('/api/incidents?resolved=false')
-      .then(res => res.json())
-      .then(data => {
-        setIncidents(data);
-        setLoading(false);
-      });
+ useEffect(() => {
+  const fetchIncidents = async () => {
+    try {
+      // Fetch unresolved incidents
+      const unresolvedResponse = await fetch('/api/incidents?resolved=false');
+      
+      if (!unresolvedResponse.ok) {
+        throw new Error(`HTTP error! status: ${unresolvedResponse.status}`);
+      }
+      
+      const unresolvedText = await unresolvedResponse.text();
+      if (unresolvedText) {
+        const unresolvedData = JSON.parse(unresolvedText);
+        setIncidents(Array.isArray(unresolvedData) ? unresolvedData : []);
+      }
+      
+      // Fetch resolved incidents count
+      const resolvedResponse = await fetch('/api/incidents?resolved=true');
+      
+      if (resolvedResponse.ok) {
+        const resolvedText = await resolvedResponse.text();
+        if (resolvedText) {
+          const resolvedData = JSON.parse(resolvedText);
+          setResolvedCount(Array.isArray(resolvedData) ? resolvedData.length : 0);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching incidents:', error);
+      setIncidents([]); // Set empty array on error
+      setResolvedCount(0);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetch('/api/incidents?resolved=true')
-      .then(res => res.json())
-      .then(data => setResolvedCount(data.length));
-  }, []);
+  fetchIncidents();
+}, []);
+
 
   const resolveIncident = async (id: number) => {
     setIncidents(incidents.map(inc => inc.id === id ? { ...inc, resolved: true } : inc));
